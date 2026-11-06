@@ -1,0 +1,24 @@
+{
+  "id": "simple-rows",
+  "name": "Zebra Layout",
+  "description": "Flat sidebar rows, compact navigation, quiet section headings and status-only pull request icons.",
+  "version": "1.0.0",
+  "zeron_version": "0.2.137",
+  "signature": {
+    "key": "47DtFoDkqUMeqGiOjhlVQ1xHd-vLip2VpxlP02Q_Wcw",
+    "files": {
+      "ds/badge.luau": "fd36748bb49d34f074d7d03d2b791e3f31f77a41e80112ff223c6b2020ac16ff",
+      "ds/session_row.luau": "bbbf7a3504b045f16259cad966a88f35d1ad2aaea1d215099699a83aa9a70d27",
+      "ds/sidebar.luau": "e9f79a2e4e9a97638a3fd2bb6118256421a07735a11e1029fc1de6f3650a22f9",
+      "ds/tokens.luau": "a19b752b25e5b4f340c3dfe6534c606408723c827a032a10ea61133a3a210c40",
+      "screens/chat/composer.luau": "072c9bec9bef8e942039b18e997dfcbfd72af99ffcb5e9ed999cc3e8c74309f8",
+      "screens/chat/lane_tab.luau": "af4c86f004bbd32383ca199b09b97500987d559d52faf652a797b321e07b7d91",
+      "screens/panel/home.luau": "935ab3a46d650177164ccf8d3abc618acdb1a1c9c6d1dac778e8491e1f00bb91",
+      "screens/panel/init.luau": "b4678731dd37b3f3768182ec0ee88ba9f82f001f8329fcad59ebea189c90109a",
+      "screens/shell/init.luau": "7d4a1324ec27643aff7380a26e8326657633290ccc3466077aebeb7710e8ccb2",
+      "screens/shell/page.luau": "9fbcaafb235b6304bb6db4aaf730173035aa1972c08959b4545b6c656c38158c",
+      "screens/shell/view.luau": "2d2bd6942f6b3cbd0aca578243b1f911fe592a3546c758291cee67a7319a3b7a"
+    },
+    "sig": "0VpRgLGSVzPrPdfobTWKaRTTk5j6ZLQFfyVVcI6c4Hl2PMtPMcd-5_6ILY9fh57z31No835DfmYPL5G4GWI3AA"
+  }
+}
