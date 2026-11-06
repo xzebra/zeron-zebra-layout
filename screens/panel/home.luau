@@ -179,7 +179,7 @@ export type Props = {
 -- ---------------------------------------------------------------------------
 -- Where it runs.
 
-local function info(sid: string): Node
+local function info(sid: string, pinned: boolean?): Node
 	local function chat(): sessions.Chat?
 		return chat_of(sid)
 	end
@@ -289,17 +289,28 @@ local function info(sid: string): Node
 				icon = "git-branch",
 				label = branch,
 				tooltip = branch,
-				-- Plugins' part of the row (the Git plugin's +N −M), after its
-				-- name: a slot no plugin can offer, under Zeron's own name, given
-				-- the branch.
+				trail = if not pinned then ui.row {
+					id = "panel-home-branch-slot", shrink = 0, items = "center",
+					provide = { panel_branch = branch_info },
+					ui.slot("zeron.panel.branch", { direction = "row", items = "center" }),
+				} else nil,
+			},
+			if pinned then PanelHome.Row {
+				id = "summary-changes", icon = "file-diff", label = "Changes",
 				trail = ui.row {
-					id = "panel-home-branch-slot",
-					shrink = 0,
-					items = "center",
+					id = "panel-home-branch-slot", shrink = 0, items = "center",
+					weight = "$font.weight.semibold",
+					-- Keep the Git plugin's live totals and click behavior, restyling
+					-- only this slot: larger sans-serif figures and vivid diff inks.
+					theme = {
+						font = { mono = "{font.sans}", size = { xs = "{font.size.md}" } },
+						zeron = { diff = { added = "{zebra.summary.added}", removed = "{zebra.summary.removed}" } },
+					},
 					provide = { panel_branch = branch_info },
 					ui.slot("zeron.panel.branch", { direction = "row", items = "center" }),
 				},
-			},
+			} else nil,
+
 			-- Plugins' rows of their own under the branch (GitHub's pull
 			-- request), given the branch: no room of its own while empty
 			-- (a row added brings its own gap over it), so nothing moves.
@@ -1230,24 +1241,19 @@ end
 
 type Choice = { id: string, icon: Icon.Name, label: string, key: string, run: () -> () }
 
--- A persistent summary, independent of the active file, terminal or lane tab.
+-- Conversation summary; its visibility and fit belong to the shell.
 M.Summary = ui.component(function(props: Props): Node
 	local sid = props.session
 	if not sid then return ui.div {} end
 	return ui.column {
-		id = "panel-pinned-summary", w_full = true,
-		p = "$space.3", gap = "$space.3",
+		id = "conversation-summary", w_full = true, shrink = 0,
+		font = "$font.sans", weight = "$font.weight.medium",
+		p = "$space.3", gap = "$space.3", rounded = "$radius.xl",
+		bg = "$popover.bg", border = 1, border_color = "$border",
 		provide = { session = sid, panel = { session = sid } },
-		ui.column {
-			w_full = true, p = "$space.2", rounded = "$radius.xl",
-			bg = "$surface.raised", border = 1, border_color = "$border",
-			info(sid),
-		},
-		ui.column {
-			w_full = true, p = "$space.2", rounded = "$radius.xl",
-			bg = "$surface.raised", border = 1, border_color = "$border",
-			lanes(props, sid),
-		},
+		info(sid, true),
+		ui.div { w_full = true, h = 1, bg = "$border.subtle" },
+		lanes(props, sid),
 	}
 end)
 

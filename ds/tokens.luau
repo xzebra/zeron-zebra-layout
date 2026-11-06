@@ -6,6 +6,12 @@
 local M = {}
 
 function M.setup()
+	ui.theme.tokens {
+		zebra = {
+			summary = { added = "#00b84a", removed = "#ff3b30" },
+			unread = "#0a84ff",
+		},
+	}
 	-- The palette (palette.luau): every hue by step, the same in both themes;
 	-- the themes pick from it.
 	ui.theme.tokens { palette = require("@self/palette") }

@@ -1499,21 +1499,7 @@ M.Panel = ui.component(function(props: Props): Node
 	box.ref = box.ref or own
 	measured = box.ref
 	box[#box + 1] = ui.column { w_full = true, shrink = 0, hidden = closed, strip }
-	box[#box + 1] = ui.presence(function(): string
-		local k = key:get()
-		return if k and string.sub(k, 1, 5) == "chat:" then k else "none"
-	end, function(k: string): Node
-		if k == "none" then return ui.div {} end
-		return ui.scroll {
-			id = "panel-pinned-summary-scroll", w_full = true, shrink = 0,
-			h = function(): number
-				local height = if measured then measured.height else nil
-				return ui.raw(math.min(400, math.max(160, (height or 800) * 0.5)), "summary leaves room for the active tab below")
-			end,
-			hidden = closed, overscroll = "contain", fade = { 0, 12 }, fade_overflow = true,
-			empty_page(k, showing, true),
-		}
-	end, { w_full = true, shrink = 0 })
+
 	box[#box + 1] = content
 	box[#box + 1] = question
 	return ui.column(box)

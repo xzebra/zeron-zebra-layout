@@ -22,6 +22,7 @@ local sessions = require("@account/sessions")
 local appearance = require("@app/screens/shell/appearance")
 local art = require("@app/screens/shell/art")
 local boundary = require("@app/screens/shell/boundary")
+local summary = require("@app/screens/chat/summary_layout")
 
 export type Props = {
 	files: State<boolean>,
@@ -57,6 +58,22 @@ return function(props: Props): Node
 	local function on_plugin(): boolean
 		return route.current:get().name == "plugin"
 	end
+
+	-- Fit against the destination width before a column starts moving.
+	-- The card immediately becomes an exiting overlay; its reserve eases
+	-- away with the columns instead of snapping at a mid-animation cutoff.
+	ui.effect(function()
+		-- A manually opened popover never carries across a resize or pane toggle.
+		local _width = summary.main:get()
+		local _route = route.chat:get()
+		if summary.overlay:peek() then summary.overlay:set(false) end
+	end)
+	local function has_summary(): boolean
+		return in_session() and not on_plugin() and summary.shown()
+	end
+	local summary_gutter = motion.tween(ui.computed(function(): number
+		return if has_summary() then summary.reserve() or 0 else 0
+	end), { duration = motion.LONGEST, ease = motion.EASE })
 
 	-- What the chat route shows, under the title bar: a new chat, or a
 	-- session (a page swap; another session is the same page, showing it,
@@ -144,7 +161,11 @@ return function(props: Props): Node
 			},
 		}
 	)
-	table.insert(pane, ui.column {
+	local canvas: { [any]: any } = {
+		id = "conversation-canvas", absolute = true, left = 0, bottom = 0,
+		right = summary_gutter, top = 0,
+	}
+	table.insert(canvas, ui.column {
 		absolute = true,
 		left = 0,
 		right = 0,
@@ -163,10 +184,42 @@ return function(props: Props): Node
 		-- project instead, as Zeron's. The composer hides itself then: a
 		-- `ui.show` round it would be a box over the whole pane, taking the
 		-- pointer and the wheel from the page, as boundary's pass explains.)
-		table.insert(pane, boundary.screen(boundary.named("shell.boundary.screen.composer"), "@app/screens/chat", function(c): Node
+		table.insert(canvas, boundary.screen(boundary.named("shell.boundary.screen.composer"), "@app/screens/chat", function(c): Node
 			return c.Composer()
 		end, { pass = true }))
 	end
+	table.insert(pane, ui.div(canvas))
+	-- Only an explicitly opened narrow-screen popover covers the chat.
+	table.insert(pane, ui.show(function(): boolean
+		return has_summary() and not summary.fits()
+	end, ui.div {
+		absolute = true, left = 0, right = 0, top = TITLE_H, bottom = 0,
+		on_click = function() summary.overlay:set(false) end,
+	}))
+	table.insert(pane, ui.presence(function(): string?
+		local c = route.chat:get()
+		return if c.name == "session" and has_summary() then c.session else nil
+	end, function(sid: string): Node
+		local content = ui.ref()
+		return ui.scroll {
+			id = "conversation-summary-scroll", w_full = true,
+			h = function(): number
+				return math.min(content.height or 360, math.max(0, (box.height or 800) - TITLE_H - 24))
+			end,
+			overscroll = "contain", rounded = "$radius.xl",
+			ui.column {
+				ref = content, w_full = true, shrink = 0,
+				require("@app/screens/chat/summary")(sid, has_summary),
+			},
+		}
+	end, {
+		absolute = true, top = TITLE_H + 12, right = summary.inset,
+		enter = motion.transition({ opacity = { 0, 1 }, duration = 180, ease = motion.EASE }),
+		exit = motion.transition({ opacity = 0, duration = 180, ease = motion.EASE }),
+		w = function(): number
+			return math.min(summary.width, math.max(0, (box.width or 320) - 24))
+		end,
+	}))
 	-- Where plugins put something over the page (a banner, a tour).
 	table.insert(pane, ui.div {}) --PERFOFF
 	-- A session's name on the title line, as the shipping app has it: its
@@ -519,6 +572,10 @@ return function(props: Props): Node
 		end
 		return if shown:get() then rest_w:get() else 0
 	end
+	ui.effect(function()
+		local settled = math.max(0, fit.viewport:get() - sidebar_settled() - target())
+		if summary.main:peek() ~= settled then summary.main:set(settled) end
+	end)
 	local open_w = ui.state("shell_files_shown_width", target())
 	-- Opening or closing (the edge revealing what stands at its width):
 	-- its content keeps the width it rests at. Otherwise it fills the panel.
@@ -683,6 +740,11 @@ return function(props: Props): Node
 	end
 	local beside = ui.column {
 		id = "shell-files",
+		ui.div {
+			id = "chat-panel-nav-divider", absolute = true,
+			left = 0, top = 0, w = 1, h = TITLE_H,
+			bg = "$border.strong", pointer_events = "none",
+		},
 		hook = "shell.files",
 		w = open_w,
 		h_full = true,
@@ -803,6 +865,18 @@ return function(props: Props): Node
 			end,
 		},
 	}
+	local info_size = ds.island.metrics().control
+	table.insert(pane, ui.div {
+		id = "chat-titlebar-actions", absolute = true,
+		top = function(): number return ds.TitleBar.middle() - info_size / 2 end,
+		right = function(): number
+			-- Follow the live divider, and retain a slot for Panel as it closes.
+			local gap = (ui.theme.get("zeron.island.gap") :: number?) or 4
+			return math.max(12, ds.TitleBar.actions_right() + info_size + gap - open_w:get())
+		end,
+		require("@app/screens/chat/summary_toggle")(),
+	})
+
 	return ui.row {
 		ref = row_ref,
 		grow = 1,

@@ -6,8 +6,8 @@
 --
 -- A session's panel is its own, as in the shipping app (crates/ui
 -- `SessionPanels`): open in one chat, the others stay as they were; back
--- to a chat, it's as you left it. Open by default for the pinned summary;
--- an explicit close is remembered for the app's run. A new chat shows
+-- to a chat, it's as you left it. Closed until opened;
+-- the conversation summary is independent of this panel. A new chat shows
 -- none. Its width is one for all of them, kept across launches (the
 -- shipping app's `right_pane_width`: screens/shell/page).
 --
@@ -30,7 +30,7 @@ local M = {}
 M.rail = false
 
 M.collapsed = ui.persist("shell_collapsed", false)
--- Each panel by owner: sessions default open, plugin pages default closed.
+-- Each panel by owner; closed until explicitly opened.
 M.panels = ui.state("shell_panel_open", {} :: { [string]: boolean })
 -- Each session's panel, expanded over its chat (by session id).
 M.expanded_panels = ui.state("shell_panel_expanded", {} :: { [string]: boolean })
@@ -48,7 +48,7 @@ local function session(): string?
 end
 M.files = ui.computed(function(): boolean
 	local id = session()
-	return id ~= nil and (M.panels:get()[id] == true or (route.chat:get().name == "session" and M.panels:get()[id] ~= false))
+	return id ~= nil and M.panels:get()[id] == true
 end)
 function M.set_files(on: boolean)
 	local id = owner(route.chat:peek())

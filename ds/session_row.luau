@@ -179,7 +179,10 @@ function M.state(kind: status.Kind): Node
 		color = `$zeron.status.{kind}`,
 		tooltip = k.long,
 		label = k.long,
-		if k.glyph then status.StatusIcon { kind = kind, size = 14 } else status.StatusDot { kind = kind, size = 6 },
+		if kind == "done"
+			then ui.div { w = 9, h = 9, rounded = "$radius.full", bg = "$zebra.unread" }
+			elseif k.glyph then status.StatusIcon { kind = kind, size = 14 }
+			else status.StatusDot { kind = kind, size = 6 },
 	}
 end
 
