@@ -97,18 +97,13 @@ end
 
 -- (`ink`: its colour at rest, where a list's titles read in another, a
 -- settings page's in the primary.)
-function M.label(text: string | () -> string, strong: (() -> boolean)?, weight: string?, class: string?, ink: string?): Node
+function M.label(text: string | () -> string, strong: (() -> boolean)?, weight: string?, class: string?, ink: string?, size: number?): Node
 	return FadeText {
 		text,
 		class = class,
 		grow = 1,
-		text_size = "$font.size.md",
-		weight = function()
-			if weight then
-				return weight
-			end
-			return if strong and strong() then "$font.weight.medium" else "$font.weight.regular"
-		end,
+		text_size = if size then ui.raw(size, "sidebar label size") else "$font.size.md",
+		weight = "$font.weight.regular",
 		color = function()
 			return if strong == nil or strong() then "$text.primary" else ink or "$text.secondary"
 		end,
@@ -465,12 +460,12 @@ end
 -- A group header's words: its name, and folded, how many it holds (in
 -- `trail`'s place while that shows: a project's new chat under the
 -- pointer).
-function M.header_words(name: () -> string, count: () -> string, folded: () -> boolean, trail: Node?, trail_shown: (() -> boolean)?): Node
+function M.header_words(name: () -> string, count: () -> string, folded: () -> boolean, trail: Node?, trail_shown: (() -> boolean)?, size: number?): Node
 	return M.line(
 		FadeText {
 			name,
 			grow = 1,
-			text_size = "$font.size.md",
+			text_size = if size then ui.raw(size, "sidebar title size") else "$font.size.md",
 			weight = "$font.weight.medium",
 			color = "$text.tertiary",
 		},
@@ -487,6 +482,7 @@ function M.header_words(name: () -> string, count: () -> string, folded: () -> b
 end
 
 export type SectionProps = {
+	size: number?,
 	title: string | Message | () -> string,
 	-- Folds (a click on it; folded, how many it holds at its end).
 	open: (() -> boolean)?,
@@ -530,7 +526,7 @@ function M.Section(props: SectionProps): Node
 		ui.text {
 			props.title,
 			grow = 1,
-			text_size = "$font.size.md",
+			text_size = if props.size then ui.raw(props.size, "sidebar section size") else "$font.size.md",
 			weight = "$font.weight.medium",
 		},
 		if foldable and props.count

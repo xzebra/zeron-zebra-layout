@@ -179,7 +179,7 @@ export type Props = {
 -- ---------------------------------------------------------------------------
 -- Where it runs.
 
-local function info(sid: string, pinned: boolean?): Node
+local function info(sid: string, pinned: boolean?, open_changes: (() -> ())?): Node
 	local function chat(): sessions.Chat?
 		return chat_of(sid)
 	end
@@ -297,14 +297,19 @@ local function info(sid: string, pinned: boolean?): Node
 			},
 			if pinned then PanelHome.Row {
 				id = "summary-changes", icon = "file-diff", label = "Changes",
+				on_click = open_changes,
 				trail = ui.row {
 					id = "panel-home-branch-slot", shrink = 0, items = "center",
-					weight = "$font.weight.semibold",
-					-- Keep the Git plugin's live totals and click behavior, restyling
-					-- only this slot: larger sans-serif figures and vivid diff inks.
+					weight = "$zebra.summary.weight",
+					disabled = true, pointer_events = "none",
+					-- Keep the Git plugin's live totals; the parent owns the action, restyling
+					-- only this slot. Resolve the label's font in the app theme,
+					-- before the plugin supplies its own typography context.
 					theme = {
-						font = { mono = "{font.sans}", size = { xs = "{font.size.md}" } },
-						zeron = { diff = { added = "{zebra.summary.added}", removed = "{zebra.summary.removed}" } },
+						font = {
+							mono = ui.theme.get("font.sans"),
+							size = { xs = ui.theme.get("font.size.md") },
+						},
 					},
 					provide = { panel_branch = branch_info },
 					ui.slot("zeron.panel.branch", { direction = "row", items = "center" }),
@@ -1247,11 +1252,17 @@ M.Summary = ui.component(function(props: Props): Node
 	if not sid then return ui.div {} end
 	return ui.column {
 		id = "conversation-summary", w_full = true, shrink = 0,
-		font = "$font.sans", weight = "$font.weight.medium",
+		font = "$font.sans", weight = "$zebra.summary.weight",
+		theme = { font = { weight = { medium = "{zebra.summary.weight}" } } },
 		p = "$space.3", gap = "$space.3", rounded = "$radius.xl",
 		bg = "$popover.bg", border = 1, border_color = "$border",
 		provide = { session = sid, panel = { session = sid } },
-		info(sid, true),
+		info(sid, true, function()
+			props.open_plugin_tab(sid, {
+				plugin = "git", kind = "git-changes", title = "Changes", icon = "file-diff",
+				data = { session = sid, scope = "branch" },
+			})
+		end),
 		ui.div { w_full = true, h = 1, bg = "$border.subtle" },
 		lanes(props, sid),
 	}

@@ -2,27 +2,32 @@
   "id": "simple-rows",
   "name": "Zebra Layout",
   "description": "Compact sidebar with status badges and a pinned conversation summary with device, project, branch, changes, side chats, and subagents.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "zeron_version": "0.2.137",
   "signature": {
     "key": "47DtFoDkqUMeqGiOjhlVQ1xHd-vLip2VpxlP02Q_Wcw",
     "files": {
+      "assets/icons/files/LICENSE.symbols": "ee1cf054fe6df76e77337e29116d3049b7e5d410601bb3f464dabc1a91b1d726",
       "ds/badge.luau": "fd36748bb49d34f074d7d03d2b791e3f31f77a41e80112ff223c6b2020ac16ff",
-      "ds/session_row.luau": "8701eea7c24ed22ca2d63882b1ffef064a05425cc7145a008369f8a37a3eb1f3",
-      "ds/sidebar.luau": "e9f79a2e4e9a97638a3fd2bb6118256421a07735a11e1029fc1de6f3650a22f9",
-      "ds/tokens.luau": "502fc9b573d3d95e5757f89127ee6c362bbdcbe46027768d5f6eadcb917d1fbf",
+      "ds/git.luau": "3f32d52849e5cf989c750cfeffac41d771de29285508abd02e493b930eb095f9",
+      "ds/git_changes.luau": "47837eeacdc89bc3888fbe09b6ee70dd192c8e5d5e1125f8e2e3d7bbd7f48e44",
+      "ds/git_file_icon.luau": "a30ec1d54485ad4ce5a8ceff0fa3249a505faf72914f34e386806028c1c2bcc5",
+      "ds/git_file_icon_svgs.luau": "ca7dff0846b738e3f5a4593bbe32fce1316038d33d142979719c174926be7a8a",
+      "ds/session_row.luau": "d26ff8cc04283b5a146babcf0f04f71a0f9e91a467a466f97820a04a716f8f9a",
+      "ds/sidebar.luau": "976097673a6a10bbd88b36c566ff874619225a8c835cb4ff4a099e7f688ecbd0",
+      "ds/tokens.luau": "2a10f0ec7062ad4faf7a7f40efc77aba88b2eff2e5a8dd16d5f59c2fc79bb18e",
       "screens/chat/composer.luau": "072c9bec9bef8e942039b18e997dfcbfd72af99ffcb5e9ed999cc3e8c74309f8",
       "screens/chat/lane_tab.luau": "af4c86f004bbd32383ca199b09b97500987d559d52faf652a797b321e07b7d91",
       "screens/chat/summary.luau": "e110af92226b6fc1f3202c687859804f560737438d807b19151618fe9f018e30",
       "screens/chat/summary_layout.luau": "f3952f6b849a65100fcb8e1aec50beefb8dffb88c73e43c4b992cb2bc1ce06ae",
       "screens/chat/summary_toggle.luau": "3bd02c967ba6dcd64e6eb07c05acec9d6acb3759e013835cfcd61b73f6dedd10",
-      "screens/panel/home.luau": "703617151ccbb62edbe99dfb1acd1ff5cef4f11178467798ceb900f03a1d37c7",
+      "screens/panel/home.luau": "ae956b68b5cbd222a1d96c85decc3f2bb956351e90dc8d3678d540164a9754eb",
       "screens/panel/init.luau": "88e51a792ded4c5afa19c6e4ff30389e483ee59db5c31b9400abd00ced3d0e2a",
       "screens/shell/init.luau": "7d4a1324ec27643aff7380a26e8326657633290ccc3466077aebeb7710e8ccb2",
       "screens/shell/page.luau": "5f2e95ffb45a736cb168e44d2d7ec10d662ca0d2bca01d08028c85c7cd2a5b51",
       "screens/shell/title_bar.luau": "9890ccf4bb00cbd4651296a88e359a975c375cdb77a08159ae5f8f48f3e8a7fc",
       "screens/shell/view.luau": "229fa66ef40e52683508846a804ed226d6a26c218e38df758f9a6fd94782ba77"
     },
-    "sig": "kN2RSvXhnm78RU4hdsz_GP1S0klMecyJR0dhdRqBUZUpSpb7gcHrzKpTZxBoM9KW0qegPr04baeZki9Tj1sNBg"
+    "sig": "8iY6S0Ze_Y4jjckxKnt12nAbJbV59IUESiNGLDnbBPKWyRMiX5tBIthVM3JkldsoLcnEs807WZKqRXFhor7TDw"
   }
 }

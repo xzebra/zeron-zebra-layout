@@ -241,6 +241,8 @@ local TALL = 46
 -- A section's title (Pinned, yours, the groups'): a short row over its
 -- sessions.
 local TITLE = 24
+-- Sidebar typography, matched visually to the supplied ChatGPT reference.
+local LABEL_SIZE = 14
 -- How far an icon beside a name sits from its line's middle (down;
 -- negative, up). An icon is taller than a name's capitals, so centred it
 -- hangs below the baseline and reads low: it sits half a point up.
@@ -785,6 +787,7 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 	-- rows).
 	type Row = {
 		lead: Node?,
+		lead_y: number?,
 		words: Node,
 		-- (A function for a name that changes: a section's, renamed.)
 		name: string | () -> string,
@@ -877,7 +880,7 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 				-- (Beside its words, centred where they read; alone on the
 				-- rail, on its box.)
 				ui.div {
-					y = if railed() and not r.wide then 0 else OPTICAL,
+					y = if railed() and not r.wide then 0 else r.lead_y or OPTICAL,
 					if leads
 						then ui.div(fades({ r.lead }, leads))
 						else r.lead,
@@ -1229,8 +1232,8 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 				border = 0,
 				bg = "#00000000",
 				focus = { border = 0, outline = 0 },
-				text_size = "$font.size.md",
-				weight = "$font.weight.medium",
+				text_size = ui.raw(LABEL_SIZE, "sidebar label size"),
+				weight = "$font.weight.regular",
 				color = "$text.primary",
 				select_on_focus = true,
 				on_key = function(e): boolean
@@ -1268,7 +1271,7 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 			})),
 			label(function(): string
 				return cur().title
-			end, strong, "$font.weight.medium", nil, "$text.primary")
+			end, strong, "$font.weight.regular", nil, "$text.primary", LABEL_SIZE)
 		)
 		if p and not SessionRow.groups_by(by, "project") then
 			title = ui.row {
@@ -1568,6 +1571,7 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 			-- (The shared section title, ds/session_row: on the sidebar's own
 			-- inset, fading with its rail.)
 			SessionRow.Section {
+				size = LABEL_SIZE,
 				title = title,
 				open = if foldable then function(): boolean
 					return (open :: State<boolean>):get()
@@ -1606,7 +1610,8 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 	-- (a palette hue's 500, inked in its 50; or `{ bg, ink }`, tokens of its
 	-- own), or the project's own artwork; and, when its sessions can't be
 	-- seen, a badge for the most pressing of them.
-	local function group_tile(hue: string | { bg: string, ink: string } | () -> string?, inside: Node, sessions: Sessions, hidden: () -> boolean, src: (string | () -> string?)?, emoji: (() -> string?)?): Node
+	local function group_tile(hue: string | { bg: string, ink: string } | () -> string?, inside: Node, sessions: Sessions, hidden: () -> boolean, src: (string | () -> string?)?, emoji: (() -> string?)?, size: number?): Node
+		local tile_size = size or 18
 		local function badge(kind: status.Kind): Node
 			return ui.div {
 				absolute = true,
@@ -1619,9 +1624,9 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 			local most = pressing(sessions)
 			return ui.div {
 				relative = true,
-				w = 18,
-				h = 18,
-				Tile { hue = if type(hue) == "string" or type(hue) == "function" then hue :: any else nil, inside = inside, size = 18, src = src, emoji = emoji },
+				w = tile_size,
+				h = tile_size,
+				Tile { hue = if type(hue) == "string" or type(hue) == "function" then hue :: any else nil, inside = inside, size = tile_size, src = src, emoji = emoji },
 				if most then ui.show(hidden, badge(most)) else nil,
 			}
 		end
@@ -1629,9 +1634,9 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 		-- each kind its own.
 		return ui.div {
 			relative = true,
-			w = 18,
-			h = 18,
-			Tile { hue = if type(hue) == "string" or type(hue) == "function" then hue :: any else nil, inside = inside, size = 18, src = src, emoji = emoji },
+			w = tile_size,
+			h = tile_size,
+			Tile { hue = if type(hue) == "string" or type(hue) == "function" then hue :: any else nil, inside = inside, size = tile_size, src = src, emoji = emoji },
 			ui.presence(function(): status.Kind?
 				return if hidden() then pressing(listed(sessions)) else nil
 			end, badge),
@@ -1784,7 +1789,7 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 							-- (A group that isn't a folder, the chats in none, wears
 							-- its glyph on the chrome's quiet wash, not a letter.)
 							if p.icon then
-								return group_tile(QUIET, Icon { name = p.icon, size = 12 }, live or own, hidden)
+								return group_tile(QUIET, Icon { name = p.icon, size = 10 }, live or own, hidden, nil, nil, 16)
 							end
 							local hue, src, emoji = look(p)
 							return group_tile(
@@ -1799,7 +1804,8 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 								live or own,
 								hidden,
 								src,
-								emoji
+								emoji,
+								16
 							)
 						end,
 					})
@@ -3171,7 +3177,7 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 				drag_y = nil
 			end,
 			drag_preview = function()
-				return lifted(TITLE, ui.text { sec_now().name, literal = true, text_size = "$font.size.md", weight = "$font.weight.medium", color = "$text.secondary" })
+				return lifted(TITLE, ui.text { sec_now().name, literal = true, text_size = ui.raw(LABEL_SIZE, "sidebar section size"), weight = "$font.weight.medium", color = "$text.secondary" })
 			end,
 			ui.show(
 				editing,
@@ -3185,7 +3191,7 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 					border = 0,
 					bg = "#00000000",
 					focus = { border = 0, outline = 0 },
-					text_size = "$font.size.md",
+					text_size = ui.raw(LABEL_SIZE, "sidebar section size"),
 					weight = "$font.weight.medium",
 					color = "$text.primary",
 					select_on_focus = true,
@@ -3213,7 +3219,7 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 						return sec_now().name
 					end,
 					grow = 1,
-					text_size = "$font.size.md",
+					text_size = ui.raw(LABEL_SIZE, "sidebar section size"),
 					weight = "$font.weight.medium",
 				}
 			),
@@ -3254,6 +3260,7 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 		local header = row {
 			class = "section-header",
 			plain = g.project ~= nil,
+			lead_y = if g.project then 0 else nil,
 			provide = if g.project then { project = g.project } else nil,
 			name = name,
 			hovered = hovered,
@@ -3278,7 +3285,8 @@ local places: State<Places> = props.places or ui.use_state({ pinned = pinned_ids
 					then function(): boolean
 						return hovered:get()
 					end
-					else nil
+					else nil,
+				LABEL_SIZE
 			),
 			on_click = function()
 				fold_set(group_fold(g.key), not open:peek())

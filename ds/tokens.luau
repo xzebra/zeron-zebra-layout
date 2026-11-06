@@ -8,7 +8,7 @@ local M = {}
 function M.setup()
 	ui.theme.tokens {
 		zebra = {
-			summary = { added = "#00b84a", removed = "#ff3b30" },
+			summary = { weight = 450 },
 			unread = "#0a84ff",
 		},
 	}
@@ -603,7 +603,29 @@ function M.setup()
 	local ok, own = pcall(require, "@app/theme")
 	if ok then
 		ui.effect(function()
-			palettes.wear(palettes.slots(own))
+			local slots = palettes.slots(own)
+			palettes.wear(slots)
+			-- The user's codex-theme-v1 exports define explicit diff colours.
+			-- Preserve those semantics for this theme instead of the mapper's
+			-- contrast-adjusted success/danger inks. Other themes map normally.
+			for _, kind in { "light", "dark" } do
+				local p = (slots :: any)[kind]
+				if p and p.id == `custom-chatgpt-{kind}` then
+					local tokens = palettes.tokens(p)
+					tokens["zeron.diff.added"] = p.success
+					tokens["zeron.diff.removed"] = p.danger
+					tokens["zeron.syntax.inserted"] = p.success
+					tokens["zeron.syntax.deleted"] = p.danger
+					-- Zeron shares this token between command and skill mentions.
+					tokens["zeron.composer.token.action"] = p.ansi[6]
+					ui.theme.register {
+						name = (palettes.scheme :: any)[kind],
+						type = kind,
+						extends = `zeron-{kind}`,
+						tokens = tokens,
+					}
+				end
+			end
 		end)
 	else
 		palettes.wear(nil)
