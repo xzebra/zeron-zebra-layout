@@ -14,11 +14,17 @@ You can also download `simple-rows.zeron-template` from the latest release and u
 
 ## Source
 
-`zeron-template.json` at the repository root contains the signed template manifest. The files listed in `signature.files` are checked in alongside it. They match the signed package attached to release `v1.2.0`.
+`zeron-template.json` at the repository root contains the signed template manifest. The files listed in `signature.files` are checked in alongside it. They match the signed package attached to release `v1.2.1`.
 
 The current Zeron beta installs repository links from GitHub release assets. Keeping the release asset makes installation work without changing Zeron. Git tags alone are not an install source in this beta.
 
 When publishing an update, export a fresh signed `.zeron-template` package from Zeron, update the root manifest and its files from that package, and attach the package to a GitHub release. Editing signed files requires exporting and signing again.
+
+## Version 1.2.1
+
+- Restore links and inline code on a fresh app launch by declaring the current transcript accent tokens.
+- Add current quote/list marker and file/mention chip tokens.
+- Preserve the compact layout and custom ChatGPT colors.
 
 ## Version 1.2.0
 

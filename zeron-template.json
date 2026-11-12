@@ -2,7 +2,7 @@
   "id": "simple-rows",
   "name": "Zebra Layout",
   "description": "Compact sidebar with status badges and a pinned conversation summary with device, project, branch, changes, side chats, and subagents.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "zeron_version": "0.2.137",
   "signature": {
     "key": "47DtFoDkqUMeqGiOjhlVQ1xHd-vLip2VpxlP02Q_Wcw",
@@ -15,7 +15,7 @@
       "ds/git_file_icon_svgs.luau": "ca7dff0846b738e3f5a4593bbe32fce1316038d33d142979719c174926be7a8a",
       "ds/session_row.luau": "d26ff8cc04283b5a146babcf0f04f71a0f9e91a467a466f97820a04a716f8f9a",
       "ds/sidebar.luau": "976097673a6a10bbd88b36c566ff874619225a8c835cb4ff4a099e7f688ecbd0",
-      "ds/tokens.luau": "2a10f0ec7062ad4faf7a7f40efc77aba88b2eff2e5a8dd16d5f59c2fc79bb18e",
+      "ds/tokens.luau": "9f2ea9eec9cfe48a0312cfa4314801afbf02fa72d7263141105a7efc886d9fdf",
       "screens/chat/composer.luau": "072c9bec9bef8e942039b18e997dfcbfd72af99ffcb5e9ed999cc3e8c74309f8",
       "screens/chat/lane_tab.luau": "af4c86f004bbd32383ca199b09b97500987d559d52faf652a797b321e07b7d91",
       "screens/chat/summary.luau": "e110af92226b6fc1f3202c687859804f560737438d807b19151618fe9f018e30",
@@ -28,6 +28,6 @@
       "screens/shell/title_bar.luau": "9890ccf4bb00cbd4651296a88e359a975c375cdb77a08159ae5f8f48f3e8a7fc",
       "screens/shell/view.luau": "229fa66ef40e52683508846a804ed226d6a26c218e38df758f9a6fd94782ba77"
     },
-    "sig": "8iY6S0Ze_Y4jjckxKnt12nAbJbV59IUESiNGLDnbBPKWyRMiX5tBIthVM3JkldsoLcnEs807WZKqRXFhor7TDw"
+    "sig": "gGN_BW9Hf2rSbyaGW_TOSgCfYA921s5ZOUr7C9bQ6KB-iHxlfyGN7P1HczVA3CuPJjKLVWteblUyUDabr1yEAg"
   }
 }
